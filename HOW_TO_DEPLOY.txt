@@ -1,0 +1,77 @@
+========================================
+   HOW TO DEPLOY TO VERCEL
+========================================
+
+Your website is ready! Just follow these steps:
+
+OPTION 1: EASIEST WAY (Via Vercel Website)
+-------------------------------------------
+
+1. Double-click "deploy.bat" (or run "deploy.ps1" in PowerShell)
+   This will prepare your git repository
+
+2. If you DON'T have a GitHub account yet:
+   - Go to github.com and create a free account
+   - Click the "+" icon (top right) and "New repository"
+   - Name it "grease-shoes" (or any name you like)
+   - Click "Create repository"
+   - Copy the repository URL (it will be shown to you)
+
+3. Connect to GitHub (run these commands in git bash or command prompt):
+   
+   git remote add origin YOUR_GITHUB_URL_HERE
+   git push -u origin main
+
+4. Go to vercel.com and:
+   - Sign up or log in
+   - Click "Add New Project"
+   - Import your GitHub repository
+   - Click "Deploy"
+   - Wait 2 minutes
+   - DONE! Your site is live!
+
+OPTION 2: VERCEL CLI (For advanced users)
+------------------------------------------
+
+1. Install Vercel CLI:
+   npm i -g vercel
+
+2. Run:
+   vercel
+
+3. Follow the prompts
+
+OPTION 3: Direct Manual Steps
+------------------------------
+
+Open Command Prompt (cmd) or Git Bash in your project folder and run:
+
+   git init
+   git add .
+   git commit -m "Initial commit"
+   git branch -M main
+   
+   (Then connect to GitHub and push, then deploy on Vercel website)
+
+========================================
+IMPORTANT NOTES
+========================================
+
+- Your project is configured and ready to deploy
+- All photos are already copied to public/Photos/
+- No environment variables needed
+- Vercel will auto-detect Next.js
+- Build time: ~2 minutes
+- Free hosting on Vercel!
+
+========================================
+NEED HELP?
+========================================
+
+Check these files:
+- QUICK_START.md - Fast deployment guide
+- DEPLOYMENT.md - Detailed deployment instructions
+- README.md - Project documentation
+
+========================================
+

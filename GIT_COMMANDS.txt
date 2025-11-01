@@ -1,0 +1,43 @@
+========================================
+MANUAL GIT COMMANDS TO RUN
+========================================
+
+Open Git Bash or Command Prompt in your project folder and run these commands:
+
+1. Initialize git (if not already done):
+   git init
+
+2. Add all files:
+   git add .
+
+3. Commit the changes:
+   git commit -m "Initial commit - Grease Shoes website"
+
+4. Set the remote repository:
+   git remote add origin https://github.com/ido6/Grease2.git
+
+5. Create main branch:
+   git branch -M main
+
+6. Push to GitHub:
+   git push -u origin main
+
+========================================
+IMPORTANT NOTES
+========================================
+
+- Make sure you're logged into GitHub on your computer
+- If you get authentication errors, you may need to set up GitHub credentials
+- The Photos directory will be included in git (needed for Vercel deployment)
+- All photos are already in public/Photos/, so they'll be deployed
+
+========================================
+AFTER PUSHING TO GITHUB
+========================================
+
+Then go to Vercel and deploy from the GitHub repository!
+
+Your site will be live at: https://grease2.vercel.app (or similar)
+
+========================================
+
