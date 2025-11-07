@@ -1,169 +1,61 @@
-'use client';
-import Link from 'next/link';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
-import FilterSheet from '@/components/FilterSheet';
-import { useMemo, useState } from 'react';
+import Script from 'next/script';
+import ShoesPageContent from '@/components/pages/ShoesPageContent';
 import { PRODUCTS } from '@/lib/data';
+import { buildBreadcrumbJsonLd, buildPageMetadata, jsonLdScript, SITE_URL } from '@/lib/seo-config';
+
+export const metadata = buildPageMetadata({
+  titleHe: 'Grease Shoes – קטלוג נעליים',
+  titleEn: 'Grease Shoes – Women\'s Shoes Catalog',
+  descriptionHe: 'גלי מגוון נעלי נשים מעוצבות לקיץ, לערב וליום יום עם התאמה מדויקת למידות.',
+  descriptionEn: 'Browse designed women\'s shoes for every occasion with size filters and curated looks.',
+  path: '/shoes'
+});
+
+const productListJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: 'קטלוג נעלי נשים Grease Shoes',
+  url: `${SITE_URL}/shoes`,
+  itemListElement: PRODUCTS.map((product, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    url: `${SITE_URL}/shoes/${product.id}`,
+    item: {
+      '@type': 'Product',
+      name: product.title,
+      image: new URL(product.image, SITE_URL).toString(),
+      offers: {
+        '@type': 'Offer',
+        priceCurrency: 'ILS',
+        price: product.price.toFixed(2),
+        availability: 'https://schema.org/InStock'
+      }
+    }
+  }))
+};
+
+const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+  { name: 'דף הבית', url: SITE_URL },
+  { name: 'נעליים', url: `${SITE_URL}/shoes` }
+]);
 
 export default function ShoesPage() {
-  const [query, setQuery] = useState('');
-  const [color, setColor] = useState<string>('');
-  const [heel, setHeel] = useState<string>('');
-  const [size, setSize] = useState<string>('');
-  const [collection, setCollection] = useState<string>('');
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
-
-  const filtered = useMemo(() => {
-    return PRODUCTS.filter((p) => {
-      const matchQuery = p.title.includes(query.trim());
-      const matchColor = !color || p.color === color;
-      const matchHeel = !heel || p.heel === heel;
-      const matchSize = !size || p.size.includes(Number(size));
-      const matchCollection = !collection || p.collection === collection;
-      return matchQuery && matchColor && matchHeel && matchSize && matchCollection;
-    });
-  }, [query, color, heel, size, collection]);
-
-  const activeFilterCount = [color, heel, size, collection].filter(Boolean).length;
-
   return (
-    <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden">
-      <div className="layout-container flex h-full grow flex-col">
-        <div className="px-4 md:px-10 lg:px-20 xl:px-40 flex flex-1 justify-center py-5">
-          <div className="layout-content-container flex flex-col max-w-7xl w-full flex-1">
-            <Header />
-            <main className="flex flex-col gap-8">
-              {/* Back Button */}
-              <Link href="/" className="flex items-center gap-2 text-primary hover:underline font-body">
-                <span className="material-symbols-outlined">arrow_forward</span>
-                <span>חזרה לעמוד הבית</span>
-              </Link>
-
-              {/* Mobile Filter Button */}
-              <button
-                onClick={() => setIsFilterOpen(true)}
-                className="md:hidden flex items-center justify-center gap-2 h-14 px-4 bg-section-light dark:bg-section-dark rounded-xl font-medium"
-              >
-                <span className="material-symbols-outlined text-xl">tune</span>
-                <span>סינון</span>
-                {activeFilterCount > 0 && (
-                  <span className="flex items-center justify-center size-6 bg-primary text-text-light rounded-full text-xs font-bold">
-                    {activeFilterCount}
-                  </span>
-                )}
-              </button>
-
-              {/* Desktop Filters */}
-              <div className="hidden md:flex flex-col gap-4 p-4 bg-section-light dark:bg-section-dark rounded-xl">
-                <div className="flex flex-row gap-4 items-center">
-                  <input className="flex-1 rounded-lg h-12 px-4" placeholder="חיפוש" value={query} onChange={(e)=>setQuery(e.target.value)} />
-                  <select className="rounded-lg h-12 pl-4 pr-10" value={color} onChange={(e)=>setColor(e.target.value)}>
-                    <option value="">צבע</option>
-                    <option value="yellow">צהוב</option>
-                    <option value="white">לבן</option>
-                    <option value="black">שחור</option>
-                  </select>
-                  <select className="rounded-lg h-12 pl-4 pr-10" value={heel} onChange={(e)=>setHeel(e.target.value)}>
-                    <option value="">גובה עקב</option>
-                    <option value="flat">שטוח</option>
-                    <option value="mid">בינוני</option>
-                    <option value="high">גבוה</option>
-                  </select>
-                  <select className="rounded-lg h-12 pl-4 pr-10" value={size} onChange={(e)=>setSize(e.target.value)}>
-                    <option value="">מידה</option>
-                    {[36,37,38,39,40,41].map(s => <option key={s} value={s}>{s}</option>)}
-                  </select>
-                  <select className="rounded-lg h-12 pl-4 pr-10" value={collection} onChange={(e)=>setCollection(e.target.value)}>
-                    <option value="">קולקציה</option>
-                    <option value="summer">קיץ</option>
-                    <option value="classic">קלאסי</option>
-                    <option value="evening">ערב</option>
-                  </select>
-                </div>
-              </div>
-
-              <section>
-                <div className="grid grid-cols-[repeat(auto-fit,minmax(158px,1fr))] gap-4 p-2 md:p-4">
-                  {filtered.map((item) => (
-                    <Link key={item.id} href={`/shoes/${item.id}`} className="flex flex-col gap-3 pb-3 group active:scale-[0.98] transition-transform">
-                      <div
-                        className="w-full bg-center bg-no-repeat aspect-[3/4] bg-cover rounded-xl overflow-hidden transform group-hover:scale-105 transition-transform duration-300"
-                        style={{ backgroundImage: `url(${item.image})` }}
-                        role="img"
-                        aria-label={item.title}
-                      />
-                      <p className="text-base md:text-lg font-medium leading-normal text-center font-body">{item.title}</p>
-                    </Link>
-                  ))}
-                </div>
-              </section>
-            </main>
-            <Footer />
-          </div>
-        </div>
-      </div>
-      <FilterSheet isOpen={isFilterOpen} onClose={() => setIsFilterOpen(false)} title="סינון נעליים" activeFilterCount={activeFilterCount}>
-        <div className="space-y-6">
-          {/* Search */}
-          <div>
-            <label className="block text-base font-bold mb-3">חיפוש</label>
-            <input className="w-full rounded-lg h-12 px-4" placeholder="חפשי נעליים..." value={query} onChange={(e)=>setQuery(e.target.value)} />
-          </div>
-          
-          {/* Color Filter */}
-          <div>
-            <label className="block text-base font-bold mb-3">צבע</label>
-            <select className="w-full rounded-lg h-12 pl-4 pr-10" value={color} onChange={(e)=>setColor(e.target.value)}>
-              <option value="">כל הצבעים</option>
-              <option value="yellow">צהוב</option>
-              <option value="white">לבן</option>
-              <option value="black">שחור</option>
-            </select>
-          </div>
-          
-          {/* Heel Height Filter */}
-          <div>
-            <label className="block text-base font-bold mb-3">גובה עקב</label>
-            <select className="w-full rounded-lg h-12 pl-4 pr-10" value={heel} onChange={(e)=>setHeel(e.target.value)}>
-              <option value="">כל הגבהים</option>
-              <option value="flat">שטוח</option>
-              <option value="mid">בינוני</option>
-              <option value="high">גבוה</option>
-            </select>
-          </div>
-          
-          {/* Size Filter */}
-          <div>
-            <label className="block text-base font-bold mb-3">מידה</label>
-            <select className="w-full rounded-lg h-12 pl-4 pr-10" value={size} onChange={(e)=>setSize(e.target.value)}>
-              <option value="">כל המידות</option>
-              {[36,37,38,39,40,41].map(s => <option key={s} value={s}>{s}</option>)}
-            </select>
-          </div>
-          
-          {/* Collection Filter */}
-          <div>
-            <label className="block text-base font-bold mb-3">קולקציה</label>
-            <select className="w-full rounded-lg h-12 pl-4 pr-10" value={collection} onChange={(e)=>setCollection(e.target.value)}>
-              <option value="">כל הקולקציות</option>
-              <option value="summer">קיץ</option>
-              <option value="classic">קלאסי</option>
-              <option value="evening">ערב</option>
-            </select>
-          </div>
-          
-          {/* Apply Button */}
-          <button
-            onClick={() => setIsFilterOpen(false)}
-            className="w-full h-14 bg-primary text-text-light rounded-xl font-bold text-base"
-          >
-            החל סינון
-          </button>
-        </div>
-      </FilterSheet>
-    </div>
+    <>
+      <Script
+        id="shoes-itemlist-jsonld"
+        type="application/ld+json"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={jsonLdScript(productListJsonLd)}
+      />
+      <Script
+        id="shoes-breadcrumb-jsonld"
+        type="application/ld+json"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={jsonLdScript(breadcrumbJsonLd)}
+      />
+      <ShoesPageContent />
+    </>
   );
 }
-
 

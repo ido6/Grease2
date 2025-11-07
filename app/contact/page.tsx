@@ -1,38 +1,53 @@
-'use client';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+import Script from 'next/script';
+import ContactPageContent from '@/components/pages/ContactPageContent';
+import { buildBreadcrumbJsonLd, buildPageMetadata, BUSINESS_INFO, jsonLdScript, SITE_URL } from '@/lib/seo-config';
+
+export const metadata = buildPageMetadata({
+  titleHe: 'Grease Shoes – צור קשר',
+  titleEn: 'Grease Shoes – Contact Us',
+  descriptionHe: 'צוות שירות הלקוחות של Grease Shoes זמין לשאלות, הזמנות ובקשות שירות.',
+  descriptionEn: 'Reach Grease Shoes customer care for orders, questions, and service requests.',
+  path: '/contact'
+});
+
+const contactJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ContactPage',
+  name: 'צור קשר עם Grease Shoes',
+  url: `${SITE_URL}/contact`,
+  description: metadata.description,
+  contactPoint: {
+    '@type': 'ContactPoint',
+    telephone: BUSINESS_INFO.phone,
+    contactType: 'customer service',
+    areaServed: 'IL',
+    availableLanguage: ['he', 'en'],
+    email: BUSINESS_INFO.email
+  }
+};
+
+const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+  { name: 'דף הבית', url: SITE_URL },
+  { name: 'צור קשר', url: `${SITE_URL}/contact` }
+]);
 
 export default function ContactPage() {
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-  };
-
   return (
-    <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden">
-      <div className="layout-container flex h-full grow flex-col">
-        <div className="px-4 md:px-10 lg:px-20 xl:px-40 flex flex-1 justify-center py-5">
-          <div className="layout-content-container flex flex-col max-w-7xl w-full flex-1">
-            <Header />
-            <main className="flex flex-col gap-8">
-              <section className="rounded-xl p-8 md:p-12 bg-section-light dark:bg-section-dark">
-                <h1 className="text-3xl font-bold font-display mb-4">צור קשר</h1>
-                <p className="text-lg font-body mb-6">נשמח לשמוע ממך! אפשר ליצור קשר דרך הטופס.</p>
-                <div className="flex flex-col gap-6 max-w-xl">
-                  <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4">
-                    <input className="rounded-lg h-12 px-4" placeholder="שם מלא" autoComplete="name" required />
-                    <input className="rounded-lg h-12 px-4" placeholder="אימייל" type="email" autoComplete="email" inputMode="email" />
-                    <textarea className="rounded-lg min-h-32 px-4 py-3" placeholder="הודעה" required />
-                    <button type="submit" className="rounded-lg h-12 bg-primary font-display font-bold active:scale-95 transition-transform">שליחה</button>
-                  </form>
-                </div>
-              </section>
-            </main>
-            <Footer />
-          </div>
-        </div>
-      </div>
-    </div>
+    <>
+      <Script
+        id="contact-jsonld"
+        type="application/ld+json"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={jsonLdScript(contactJsonLd)}
+      />
+      <Script
+        id="contact-breadcrumb-jsonld"
+        type="application/ld+json"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={jsonLdScript(breadcrumbJsonLd)}
+      />
+      <ContactPageContent />
+    </>
   );
 }
-
 
